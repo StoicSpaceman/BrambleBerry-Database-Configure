@@ -1,0 +1,389 @@
+--Create tables
+;
+drop table if exists product
+;
+create table product (
+item_id varchar(10) not null,
+product_name varchar (50) not null,
+safety_notes text,
+descrip text ,
+shipping_restrict text,
+price money not null,
+instruction text,
+dimensions varchar (15),
+primary key (item_id)
+)
+;
+drop table if exists ingredient
+;
+create table ingredient (
+i_item_id smallint not null,
+item_id varchar (200) not null,
+shelf_life varchar (10),
+primary key (i_item_id)
+foreign key (item_id) references product(item_id)
+)
+;
+drop table if exists packaging
+;
+create table packaging (
+p_item_id VARCHAR (25) not null,
+material varchar (100),
+primary key (p_item_id)
+)
+;
+drop table if exists craft_recommend
+;
+create table craft_recommend (
+item_id varchar (200) not null,
+crafts text,
+primary key (item_id)
+)
+;
+drop table if exists ingredient_common
+;
+create table ingredient_common (
+item_id varchar (200) not null,
+ingredient_common varchar (20),
+primary key (item_id)
+)
+;
+drop table if exists ingredient_INCI
+;
+create table ingredient_INCI (
+litem_id smallint not null,
+ingredient_INCI varchar (50),
+primary key (litem_id)
+)
+;
+drop table if exists interacts_with
+;
+create table interacts_with (
+customer_id smallint not null,
+item_id varchar (200) not null,
+primary key (customer_id, item_id)
+)
+;
+drop table if exists added_to
+;
+create table added_to (
+item_id varchar (200) not null,
+cart_item_id varchar (25) not null,
+primary key (item_id, cart_item_id)
+)
+;
+drop table if exists cart_item
+;
+create table cart_item (
+cart_item_id varchar (25) not null,
+total_cost money not null,
+quantity smallint not null,
+cart_id varchar (25) not null,
+primary key (cart_item_id)
+)
+;
+drop table if exists review
+;
+create table review (
+review_id varchar (25) not null,
+customer_id smallint not null,
+submitted date not null,
+rating smallint not null,
+flagged bit not null,
+review_text text,
+primary key (review_id)
+)
+;
+drop table if exists sentiment
+;
+create table sentiment (
+review_id varchar (25) not null,
+sentiment_pro text,
+sentiment_con text,
+primary key (review_id)
+)
+;
+drop table if exists customer
+;
+create table customer (
+customer_id smallint not null,
+first_name varchar (30),
+last_name varchar (30),
+email varchar (30),
+primary key (customer_id)
+)
+;
+drop table if exists addresses
+;
+create table addresses (
+customer_id smallint not null,
+customer_addresses varchar (50),
+primary key (customer_id)
+)
+;
+drop table if exists payment_info
+;
+create table payment_info (
+payment_id VARCHAR (25) not null,
+customer_id text not null,
+card_number bigint not null,
+expiration_date date not null,
+ccv_code int not null,
+zip_code int not null,
+name_on_card varchar (50),
+primary key (customer_id, payment_id)
+)
+;
+drop table if exists order_history
+;
+create table order_history (
+customer_id smallint not null,
+payment_id VARCHAR (25) not null,
+order_date date not null,
+cart_id VARCHAR (25) not null,
+primary key (customer_id, payment_id, cart_id)
+)
+;
+drop table if exists cart
+;
+create table cart (
+cart_id VARCHAR (25) not null,
+customer_id smallint not null,
+number_of_products int,
+total_cost money,
+primary key (cart_id, customer_id)
+)
+;
+drop table if exists payment
+;
+create table payment (
+cart_id VARCHAR (25) not null,
+payment_id VARCHAR (25) not null,
+amount money,
+primary key (cart_id, payment_id)
+)
+;
+drop table if exists writes
+;
+create table writes (
+customer_id smallint not null,
+review_id VARCHAR (25) not null,
+primary key (customer_id, review_id)
+)
+;
+
+alter table product alter COLUMN item_id type VARCHAR (200)
+;
+insert into product (item_id, product_name, safety_notes, descrip, shipping_restrict, price, instruction, dimensions)
+values  ('p1001', 'Palm Oil'
+   	 , null, 'Add palm oil to your cold process soap to create firm bars. It also creates great lather when paired with coconut oil. This product comes from a supplier that is part of the Roundtable on Sustainable Palm Oil.'
+   	 , null, '2.99', null, '1lb'),
+   	 ('p1002', 'Sodium Hydroxide Lye'
+   	 , 'Due to shipping restrictions, you can only purchase 5 jars per transaction', 'This is an essential ingredient for handmade cold process soap. Ours comes in flake form so it is easy to measure and add to your recipe.'
+   	 , 'Ground Only', '10.99', 'Lye can be dangerous if it is not handled properly. Learn how to work with it safely before getting started. Find out how much to use in your recipe with the Lye Calculator. With safety gear on, gloves, goggles, long sleeves, carefully measure the lye into a glass container. Measure distilled water or other liquid into a separate container. Slowly pour the lye into the liquid, never the other way around, and stir until it is dissolved. Let cool and then pour into oils.', '32oz'),
+   	 ('p1003', 'Fir Needle Essential Oil, Siberian'
+   	 , 'Do not apply undiluted directly on skin', 'You need this natural essential oil in your collection. It has an amazing evergreen aroma that works well in diffusers, handmade soap, candles, and more.'
+   	 , 'Ground Only', '6.50', 'Enter the total weight of your recipe into the Fragrance Calculator for light, medium, and strong recommendations.', '1.75oz'),
+   	 ('p1004', 'Golden Wax 444'
+   	 , null, 'This wax is specifically formulated for container candles. It is 100% vegetable based, and the soybeans are grown here in the US. Golden Wax 444 has great scent adhesion and throw. Try it in your next candle project!Compared to Golden Wax 464, this one is firmer and has a higher melting point.'
+   	 , null, '35.09', 'Melt the wax using a double boiler or microwave. Add the scent of your choice up to 10 percent, mix well, and pour into a candle container or wax tart mold. Ideal pour temperature is 135 degrees F. ', '10lbs'),
+   	 ('p1005', 'Cranberry Butter'
+   	 , null, 'Pick up antioxidant-rich cranberry butter today and try it in DIY soap, lotion, and lip balm. You will love how moisturizing it feels on the skin. It is a natural mix of shea butter, palm butter, jojoba oil, and freeze-dried ground cranberries. This butter does not have a noticeable cranberry scent. '
+   	 , null, '32.50', null, '1lb'),
+   	 ('p1006', 'Short 8 oz Plastic Bail Jar'
+   	 , 'If ordering smaller than case quantities, containers are placed in a paper or plastic bag together before being added to the shipping box and packaged for safe delivery to you.'
+   	 ,'This 8 oz. bail jar is perfect for packaging handmade body butter, scrub, and bath salts. Just secure the top and it is ready to use, gift, or sell.', null, '22.5'
+   	 , 'In our tests this jar was water tight and did not leak, but you should test your specific recipe before packaging and shipping to be sure.', '3.25inWx3inH'),
+   	 ('p1007','4 oz Bottle with White Disc Cap'
+   	 , null, 'These 4 oz. plastic bottles with disc caps are perfect for DIY lotion, liquid soap, shampoo, and more. Pick them up today.'
+   	 , null, '6.50', null, null),
+   	 ('p1008', 'Citrus Soap Wrap'
+   	 ,null, 'This wrap is a fresh finishing touch for handmade soap, lotion bars, and more. Each pack comes with 4 sheets of 8.5x11 heavyweight textured paper. The sheets have different citrus designs, as well as dots on the back to help with cutting. All you have to do is cut the sheet to fit your soap, wrap it around, and secure with tape. Pick them up today!'
+   	 , null, '4.99', null, '8.5x11'),
+   	 ('p1009', 'Shrink Wraps For Clear Push Tubes'
+   	 , null, 'These shrink wrap bands make DIY lotion bars, deodorant, and more look polished and professional. They are specifically designed for the Clear Push Tubes and they have a tear strip for easy removal. Pick them up today.'
+   	 , null, '12.50', 'Place the Push Tube in the band and trim off any excess plastic. Set a heat gun to low and aim it at the wrap for 1 to 2 seconds to shrink it on. You can also use a hair dryer, but a heat gun provides the best results.',null),
+   	 ('p1010', 'White Soap Box'
+   	 , 'If ordering smaller than case quantities, containers are placed in a paper or plastic bag together before being added to the shipping box and packaged for safe delivery to you.'
+   	 ,'If you are planning on selling or gifting handmade soap, pick up this sturdy white box. It will make your bars look polished and professional.'
+   	 ,null, '7.99', 'This box arrives flat.', '3.5Lx3Wx1H')   	 
+;
+alter table ingredient alter column item_id type varchar (20)
+;
+alter table ingredient alter column i_item_id type varchar(200)
+;
+
+insert into ingredient (i_item_id, item_id, shelf_life)
+values  ('i1001', 'p1001', '1.5yrs'),
+   	 ('i1002', 'p1002', '1yr'),
+   	 ('i1003', 'p1003', '1-2yrs'),
+   	 ('i1004', 'p1004', '1-2yrs'),
+   	 ('i1005', 'p1005', '1yr')
+;
+alter table packaging add column item_id varchar (6)
+;
+insert into packaging (p_item_id, material, item_id)
+values  ('pa1001', 'PET plastic and metal hardware. BPA Free', 'p1006'),
+    	('pa1002', '20/410 thread finish', 'p1007'),
+    	('pa1003', null, 'p1007'),
+    	('pa1004', 'Polyvinyl chloride plastic', 'p1009'),
+    	('pa1005', 'Glossy chipboard', 'p1010')
+;
+
+insert into craft_recommend(item_id, crafts)
+values  ('p1001', 'Cold Process, Bath Bombs'),
+    	('p1002', 'Cold Process'),
+    	('p1003', 'Melt and Pour'),
+    	('p1004', 'Candles'),
+    	('p1005', 'Cold Process, Melt and Pour, Bath Bombs'),
+    	('p1006', null),
+    	('p1007', null),
+    	('p1008', null),
+    	('p1009', null),
+    	('p1010', null)
+;
+
+alter table ingredient_common drop column item_id
+;
+alter table ingredient_common add column i_item_id varchar (6)
+;
+alter table ingredient_inci drop column litem_id
+;
+alter table ingredient_inci add column i_item_id varchar (6)
+;
+alter table ingredient_common alter column ingredient_common type varchar (200)
+;
+insert into ingredient_common(i_item_id, ingredient_common)
+values ('i1001', 'Palm Oil'),
+   	('i1002', 'Sodium Hydroxide'),
+   	('i1003', 'Siberian Fir Needle Essential Oil'),
+   	('i1004', 'Proprietary Blend of Vegetable Oils'),
+   	('i1005', 'Shea Butter, Palm Butter, Jojoba Seed Oil, Cranberry Fruit')
+;
+alter table ingredient_inci alter column ingredient_inci type varchar (200)
+;
+insert into ingredient_INCI(i_item_id, ingredient_INCI)
+values  ('i1001', 'Elaeis Guineensis Oil'),
+   	 ('i1002', 'Sodium Hydroxide'),
+   	 ('i1003', 'Abies Sibirica'),
+   	 ('i1004', 'Proprietary Blend of Vegetable Oils'),
+   	 ('i1005', 'Butyrospermum Parkii Butter, Elaeis Guineensis Butter, Simmondsia Chinensis Seed Oil, Vaccinium Macrocarpon Fruit')
+;
+ 
+
+insert into interacts_with(customer_id, item_id)
+values  (1, 'p1001'),
+    	(2, 'p1002'),
+    	(3, 'p1003'),
+    	(4, 'p1004'),
+    	(5, 'p1005')
+;
+
+insert into cart_item(cart_item_id, total_cost, quantity, cart_id)
+values  ('ci1001', 10, 10, 'ca1001'),
+    	('ci1002', 1, 50, 'ca1002'),
+    	('ci1003', 10, 1000, 'ca1003'),
+    	('ci1004', 2, 75, 'ca1004'),
+    	('ci1005', 6, 50, 'ca1005')
+;
+
+insert into added_to (item_id, cart_item_id)
+values  ('p1001','ci1001'),
+    	('p1001','ci1002'),
+    	('p1001','ci1003'),
+    	('p1001','ci1004'),
+    	('p1001','ci1005')
+;
+alter table review add column item_id varchar (6)
+;
+insert into review(review_id, customer_id,submitted, rating, flagged, review_text, item_id)
+values ('r1001', 1, '2020-10-15', 5, '0', 'Awesome', 'p1001'),
+('r1002', 2, '2020-1-15', 2, '0', 'Not good','p1002'),
+('r1003', 3, '2020-9-15', 5, '0', 'Great!','p1003'),
+('r1004', 4, '2020-5-15', 4, '0', 'Slow shipping','p1004'),
+('r1005', 5, '2020-3-15', 1, '0', 'Hate it!','p1005')
+;
+
+insert into sentiment (review_id, sentiment_pro, sentiment_con)
+values  ('r1001', 'Good value, smells good a very good product overall', 'Weird color'),
+    	('r1002', 'Good value, smells good a very good product overall', 'Ugly packaging'),
+    	('r1003', 'Good value, smells good a very good product overall', 'Too much'),
+    	('r1004', 'Easy to use, smells good a very good product overall', 'Easy to spill'),
+    	('r1005', 'Easy to use, smells good a very good product overall', null)
+;
+
+insert into customer (customer_id, first_name, last_name, email)
+ values (1, 'John', 'Smith', 'johnsmith@gmail.com'),
+    	(2, 'Sarah', 'Torres', 'saratorres@gmail.com'),
+    	(3, 'Emily', 'Richards', 'emilyrichards@gmail.com'),
+    	(4, 'Peter', 'Walker', 'peterwalker@gmail.com'),
+    	(5, 'Duke', 'Diaz', 'dukediaz@gmail.com')
+;
+
+insert into addresses (customer_id, customer_addresses)
+ values (1, '123 E 400 N, Salt Lake City, Utah'),
+    	(2, '256 W 3454 N, Denver, Colorado'),
+    	(3, '212 Honey Rd, Tampa, Florida'),
+    	(4, '124 Mountain Street, Gilbert, Arizona'),
+    	(5, '2343 Ocean Way, San Diego, Colorado')
+;
+
+insert into payment_info(payment_id, customer_id, card_number, expiration_date, ccv_code, zip_code, name_on_card)
+ values ('py1001', 1, 4928305829427180, '2020-06-14', 504, 84035, 'John Smith'),
+    	('py1002', 2, 4739294718403193, '2020-06-25', 324, 49323, 'Sarah Torres'),
+    	('py1003', 3, 4929495502104024, '2020-08-24', 453, 35398, 'Emily Richards'),
+    	('py1004', 4, 8605931904184024, '2020-02-10', 124, 23432, 'Peter Walker'),
+    	('py1005', 5, 6958391391904109, '2020-07-05', 234, 32542, 'Duke Diaz')
+;
+
+insert into order_history(customer_id, payment_id, order_date, cart_id)
+values (1, 'py1001', '2020-06-14', 'ca1001'),
+    	(2, 'py1002', '2020-06-25', 'ca1003'),
+    	(3, 'py1003', '2020-08-24', 'ca1002'),
+    	(4, 'py1004', '2020-02-10', 'ca1004'),
+    	(5, 'py1005', '2020-07-05', 'ca1005')
+;
+
+insert into cart(cart_id, customer_id, number_of_products, total_cost)
+ values ('ca1001', 1, 3, 100),
+    	('ca1002', 3, 1, 50),
+    	('ca1003', 2, 10, 10000),
+    	('ca1004', 4, 2, 150),
+    	('ca1005', 5, 6, 300)
+;
+
+insert into payment(cart_id, payment_id, amount)
+values  ('ca1001', 'py1001', 100),
+    	('ca1002', 'py1002', 50),
+    	('ca1003', 'py1003', 10000),
+    	('ca1004', 'py1004', 150),
+    	('ca1005', 'py1005', 300)
+;
+
+insert into writes (customer_id, review_id)
+ VALUEs (1, 'r1001'),
+    	(2, 'r1002'),
+    	(3, 'r1003'),
+    	(4, 'r1004'),
+    	(5, 'r1005')
+;
+alter table ingredient add foreign key (item_id) references product(item_id)
+;
+alter table packaging add foreign key (item_id) references product(item_id)
+;
+alter table craft_recommend add foreign key (item_id) references product(item_id)
+;
+alter table ingredient_common add foreign key (i_item_id) references ingredient(i_item_id)
+;
+alter table ingredient_INCI add foreign key (i_item_id) references ingredient(i_item_id)
+;
+alter table added_to add foreign key (item_id) references product(item_id)
+;
+alter table added_to add foreign key (cart_item_id) references cart_item(cart_item_id)
+;
+alter table sentiment add foreign key (review_id) references review(review_id)
+;
+drop table address
+;
+alter table cart add foreign key (customer_id) references customer(customer_id)
+;
